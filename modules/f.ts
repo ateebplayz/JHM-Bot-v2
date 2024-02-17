@@ -96,7 +96,6 @@ export async function postJob(interaction: ButtonInteraction, jobType: jobType) 
             
         })
         .catch(console.log)
-    
     try {
         let x: Message<boolean> | undefined;
         ix?.awaitMessageComponent<ComponentType.StringSelect | ComponentType.Button>({time: 10000_000}).then(async (i) => {

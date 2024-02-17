@@ -47,6 +47,6 @@ export async function execute(interaction: ButtonInteraction) {
             }
         } catch {console.log}
         mI.editReply({content: 'Succesfully rejected post ' + post?.id})
-    })
+    }).catch(console.log).finally(() => {return})
     return
 }

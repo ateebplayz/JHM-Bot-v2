@@ -24,7 +24,7 @@ export async function execute(interaction:CommandInteraction) {
     const warnEmbeds = {
         user: new WarnEmbed(reason),
         local: new SuccessEmbed(`User ${user?.username} (${user?.id}) has been successfully warned`, 'Success!').addFields({name:'Reason', value: reason}),
-        log: new ErrorEmbed('New Warning', `**User Warned**: <@!${user?.id}> (${user?.id})\n**Moderator**: <@!${interaction.user.id}>\n**Reason**: ${reason}`)
+        log: new WarnEmbed(`**User Warned**: <@!${user?.id}> (${user?.id})\n**Moderator**: <@!${interaction.user.id}>\n**Reason**: ${reason}`)
     }
     try {
         user?.send({embeds: [warnEmbeds.user]})

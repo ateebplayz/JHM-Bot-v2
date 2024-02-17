@@ -120,8 +120,9 @@ client.on('interactionCreate', async (interaction) => {
             const errorId = '210ie90132ir9e032ur9032u9tru98ur9328ur8932ure9328ur932ur8932ur923ur8932u8x'
             console.log(`${chalk.red('EXECUTE ERROR >>')} Interaction ${localInteraction.data.customId} ${Date.now() - timer}ms ${errorId}`)
             console.error(e)
-
-            await interaction.reply({ ephemeral: true, embeds: [new RunTimeErrorEmbed(errorId)] }).catch(console.log)
+            try {
+                await interaction.reply({ ephemeral: true, embeds: [new RunTimeErrorEmbed(errorId)] }).catch(console.log)
+            } catch {console.log}
         }
     }
 })
