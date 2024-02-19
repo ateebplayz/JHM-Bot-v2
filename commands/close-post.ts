@@ -4,7 +4,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { ActionRow, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, CommandInteraction, PermissionFlagsBits } from 'discord.js';
 import { footer } from '../modules/embeds'
 import { CommandOptions } from '../modules/types';
-import { getPost } from '../modules/db';
+import { deletePost, getPost } from '../modules/db';
 import { jobTypes } from '../modules/data';
 import { channels } from '..';
 import { closePost } from '../modules/f';
@@ -34,6 +34,7 @@ export async function execute(interaction:CommandInteraction) {
             }
         } else {
             await closePost(post)
+            await deletePost(post.id)
             return interaction.editReply(`Successfully deleted post with ID ${post.id}`)
         }
     } else {

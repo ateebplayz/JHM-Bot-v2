@@ -215,6 +215,7 @@ export async function automation(client: Client) {
             if(post.stats.flags.checked) {
                 if(Date.now() - post.stats.times.creation >= cooldownTime * 2) {
                     await closePost(post)
+                    await deletePost(post.id)
                     const embed = new InfoEmbed(
                         `Post Deleted`,
                         `Hey! We noticed your post **${post.info.title}** has been open for more than 4 days. Thus due to our policy we have automatically removed it.`
