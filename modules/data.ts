@@ -3,28 +3,28 @@ import { Job, Post, jobType } from "./types"
 export const JHMColorPremium = 0xd6af33
 export const JHMColor = 0x2278ff
 export const roleIds = {
-    moderator: '1204839531401052160',
-    developer: '1112023344586432532',
-    vip: '1143178792773369856',
-    premium: '1139198101337423994',
+    moderator: '1070817727813537933',
+    developer: '1158367799266250832',
+    vip: '1200957018282934323',
+    premium: '1200957014206066901',
 }
 export const channelIds = {
-    paidJob: '1205221184153583616',
-    commissionJob: '1132688945147285617',
-    forHireJob: '1132688823785115799',
-    unpaidJob: '1132688915686490203',
-    vipJob: '1142083404238688307',
-    jobApproval: '1129903286015774830',
-    jobApprovalLog: '1129903503805010010',
-    reportLog: '1200503338903543948',
-    dwcChannel: '1201190760318509226',
-    scamChannel: '1201190775183122522',
-    warnLogs: '1201201607308755146',
-    sendLogs: '1201221830170652817',
-    embedChannel: '1142871116008923216',
-    bumpLogs: '1208796131623051284'
+    paidJob: '1208868490283585566',
+    commissionJob: '1200827767244202114',
+    forHireJob: '1200827093181792266',
+    unpaidJob: '1200828645443375244',
+    vipJob: '1199370979982442618',
+    jobApproval: '1201956234677194812',
+    jobApprovalLog: '1201955282910191656',
+    reportLog: '1201955363201491024',
+    dwcChannel: '1200820172945117214',
+    scamChannel: '1069275876522471514',
+    warnLogs: '1201955423499079700',
+    sendLogs: '1201955458051735612',
+    embedChannel: '1200834619478655046',
+    bumpLogs: '1208788684644679740'
 }
-export const ownerId = '820535075178938368'
+export const ownerId = '1021402677650935918'
 export type JobTypeKeys = 'paidJob' | 'commissionJob' | 'forHireAd' | 'unpaidJob' | 'vipJob';
 export const jobTypes: Record<JobTypeKeys, jobType> = {
     paidJob: {name: 'Paid Job', value: 1, label: 'Post a Paid Job'},
