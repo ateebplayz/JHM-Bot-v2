@@ -1,4 +1,4 @@
-import { getLabelByValue } from "./helpers"
+import { getLabelByValue, getNameByValue } from "./helpers"
 import { Job, Post, jobType } from "./types"
 export const JHMColorPremium = 0xd6af33
 export const JHMColor = 0x2278ff
@@ -21,7 +21,8 @@ export const channelIds = {
     scamChannel: '1201190775183122522',
     warnLogs: '1201201607308755146',
     sendLogs: '1201221830170652817',
-    embedChannel: '1142871116008923216'
+    embedChannel: '1142871116008923216',
+    bumpLogs: '1208796131623051284'
 }
 export const ownerId = '820535075178938368'
 export type JobTypeKeys = 'paidJob' | 'commissionJob' | 'forHireAd' | 'unpaidJob' | 'vipJob';
@@ -81,5 +82,6 @@ export const PREMIUM_FOR_HIRE_BANNER_URL = "https://i.imgur.com/TuR1WE3.png"
 export const PREMIUM_UNPAID_JOB_BANNER_URL = "https://i.imgur.com/2qC9vyq.png"
 export const PREMIUM_VIP_HIRING_BANNER_URL = "https://i.ibb.co/Z2ZFYwS/JHM-Premium-VIP-Hiring-Banner.png"
 export const PREMIUM_COMMISSION_JOB_BANNER_URL = "https://i.imgur.com/nnjtLfi.png"
-export const logExtraData = (post: Post) => { return {name:'Information', value: `**User ID** : ${post.creatorId}\n**User Tag** : <@!${post.creatorId}>\n**Category** : ${getLabelByValue(post.category)}`}}
+export const logExtraData = (post: Post) => { return {name:'Information', value: `**User ID** : ${post.creatorId}\n**User Tag** : <@!${post.creatorId}>\n**Category** : ${getLabelByValue(post.category)}\n**Job Type** : ${getNameByValue(post.type)}`}}
 export const bumpCooldown = 172800000
+export const cooldownTime = 172800000

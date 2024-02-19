@@ -3,6 +3,7 @@ import { getPost, updateBump } from "../modules/db"
 import { bumpCooldown } from "../modules/data"
 import { channels } from ".."
 import { getLogEmbed } from "../modules/helpers"
+import { SuccessEmbed } from "../modules/embeds"
 
 export const data = {
     customId: 'button_post_bump',
@@ -21,6 +22,8 @@ export async function execute(interaction: ButtonInteraction) {
                     const bumpLogPost = getLogEmbed(post.creatorId, post.category, interaction.user.id, post.stats.message.url, true, 'Post Bumped!');
                     try {
                         (channels.sendLogs as TextChannel).send({embeds: [bumpLogPost]})
+                        const embed = new SuccessEmbed(`Bumped Post`, `**Post ID** : ${post.id}\n**Author** : ${interaction.user.id}`);
+                        (channels.bumpLogs as TextChannel).send({embeds: [embed]})
                         interaction.channel?.send({content: 'Bumped Post!'}).then((msg) => {msg.delete()})
                     } catch {console.log}
                     return interaction.editReply({content:'Your post has been successfully bumped'})

@@ -8,10 +8,11 @@ import { CooldownErrorEmbed, ErrorEmbed, RunTimeErrorEmbed } from './modules/emb
 import { channelIds, ownerId, roleIds } from './modules/data'
 import { mongoClient } from './modules/mongo'
 import { getMainEmbed } from './modules/presets'
+import { automation } from './modules/f'
 
 dotenv.config()
 
-export let channels: { paidJob: discord.Channel | null | undefined; commissionJob: discord.Channel | null | undefined; forHireJob: discord.Channel | null | undefined; unpaidJob: discord.Channel | null | undefined; vipJob: discord.Channel | null | undefined, jobApproval: discord.Channel | null | undefined, jobApprovalLog: discord.Channel | null | undefined, reportLog: discord.Channel | null | undefined, dwcChannel: discord.Channel | null | undefined, scamChannel: discord.Channel | null | undefined, warnLog: discord.Channel | null | undefined, sendLogs: discord.Channel | null | undefined} = {
+export let channels: { paidJob: discord.Channel | null | undefined; commissionJob: discord.Channel | null | undefined; forHireJob: discord.Channel | null | undefined; unpaidJob: discord.Channel | null | undefined; vipJob: discord.Channel | null | undefined, jobApproval: discord.Channel | null | undefined, jobApprovalLog: discord.Channel | null | undefined, reportLog: discord.Channel | null | undefined, dwcChannel: discord.Channel | null | undefined, scamChannel: discord.Channel | null | undefined, warnLog: discord.Channel | null | undefined, sendLogs: discord.Channel | null | undefined, bumpLogs: discord.Channel | null | undefined} = {
     paidJob: null,
     commissionJob: null,
     forHireJob: null,
@@ -23,7 +24,8 @@ export let channels: { paidJob: discord.Channel | null | undefined; commissionJo
     dwcChannel: null,
     scamChannel: null,
     warnLog: null,
-    sendLogs: null
+    sendLogs: null,
+    bumpLogs: null
 }
 const client = new discord.Client({intents: [discord.GatewayIntentBits.Guilds, discord.GatewayIntentBits.MessageContent, discord.GatewayIntentBits.GuildMessages, discord.GatewayIntentBits.DirectMessages]}) as JHMClient
 client.commands = new discord.Collection<string, Command>()
@@ -31,7 +33,6 @@ client.interactions = new discord.Collection<string, InteractionHandler>()
 client.cooldowns = new CooldownHandler()
 
 client.on('interactionCreate', async (interaction) => {
-    if(interaction.guild?.id !== process.env.GUILDID) return
     if (interaction.isCommand()) {
         const timer = Date.now()
         const command = client.commands.get(interaction.commandName)
@@ -175,6 +176,7 @@ client.once('ready', async (readyClient) => {
     channels.scamChannel = await client.channels.cache.find(channel => channel.id === channelIds.scamChannel)
     channels.warnLog = await client.channels.cache.find(channel => channel.id === channelIds.warnLogs)
     channels.sendLogs = await client.channels.cache.find(channel => channel.id === channelIds.sendLogs)
+    channels.bumpLogs = await client.channels.cache.find(channel => channel.id === channelIds.bumpLogs)
     readyClient.user.setPresence({
         activities: [{
             name: 'JHM Server & Posts',
@@ -183,6 +185,14 @@ client.once('ready', async (readyClient) => {
         status: 'online',
     })
     console.log(chalk.bold(chalk.green('JHM Client is ready to go.\n\n')) + `${chalk.bold('Client ID')} : ${process.env.CLIENTID}\n${chalk.bold('Client Username')} : ${readyClient.user.username}`)
+    const now = Date.now()
+    await automation(readyClient)
+    console.log(`${chalk.greenBright(chalk.bold('CHECK >> '))} Automation ${Date.now() - now}ms`)
+    setTimeout(async () => {
+        const now = Date.now()
+        await automation(readyClient)
+        console.log(`${chalk.greenBright(chalk.bold('CHECK >> '))} Automation ${Date.now() - now}ms`)
+    }, 60000*5)
 })
 
 function run() {

@@ -56,11 +56,14 @@ export async function execute(interaction: ButtonInteraction) {
             if(post.type == jobTypes.vipJob.value) {channelType = 'Text'}
             let msg2;
             const applyBtn = new ButtonBuilder().setCustomId('button_post_apply').setLabel('Apply').setEmoji('📝').setStyle(ButtonStyle.Success)
+            if(post.type == jobTypes.commissionJob.value || post.type == jobTypes.paidJob.value || post.type == jobTypes.unpaidJob.value) applyBtn.setEmoji('💼')
             const reportBtn = new ButtonBuilder().setCustomId('button_post_report').setLabel('Report').setEmoji('🚨').setStyle(ButtonStyle.Danger)
+            const referBtn = new ButtonBuilder().setCustomId('button_post_refer').setLabel('Refer').setEmoji('🤝').setStyle(ButtonStyle.Secondary)
 
             if(post.type == jobTypes.forHireAd.value) applyBtn.setLabel('Hire')
 
             const actionRow2 = new ActionRowBuilder<ButtonBuilder>().addComponents(applyBtn,reportBtn)
+            if(post.type == jobTypes.paidJob.value) actionRow2.addComponents(referBtn)
             if(channelType == 'Forum') {
                 let tags: Array<string> = [];
                 (channel as ForumChannel).availableTags.map(tag => {
@@ -70,7 +73,7 @@ export async function execute(interaction: ButtonInteraction) {
                 })
                 const bumpBtn = new ButtonBuilder().setCustomId('button_post_bump').setEmoji('🚀').setLabel('Bump').setStyle(ButtonStyle.Primary)
                 const bumpBtnRow = new ActionRowBuilder<ButtonBuilder>().addComponents(bumpBtn)
-                msg2 = await (channel as ForumChannel).threads.create({name: '[' + getLabelByValue(post.category) + '] ' + post.info.title,message: {embeds: [embed2],components:[actionRow2]}, appliedTags: tags});
+                msg2 = await (channel as ForumChannel).threads.create({name: post.info.title,message: {embeds: [embed2],components:[actionRow2]}, appliedTags: tags});
                 (channel as ForumChannel).threads.fetch(msg2.id).then(thread => {thread?.send({components: [bumpBtnRow]})})
             } else {
                 const ping = getPing(post.category)

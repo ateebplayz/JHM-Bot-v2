@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ForumChannel, GuildMember, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle } from "discord.js";
+import { APIEmbedField, ActionRowBuilder, ButtonBuilder, ButtonStyle, Embed, EmbedBuilder, ForumChannel, GuildMember, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle } from "discord.js";
 import { CARD_EMOJI, CARD_PREMIUM_EMOJI, CLOCK_EMOJI, CLOCK_PREMIUM_EMOJI, COMMISSION_JOB_BANNER_URL, DESCRIPTION_EMOJI, DESCRIPTION_PREMIUM_EMOJI, FOR_HIRE_BANNER_URL, ID_EMOJI, ID_PREMIUM_EMOJI, INVISIBLE_CHARACTER, JHMColor, JHMColorPremium, JHM_LOGO_URL, JobTypeKeys, PAID_JOB_BANNER_URL, PERSON_EMOJI, PERSON_PREMIUM_EMOJI, PREMIUM_COMMISSION_JOB_BANNER_URL, PREMIUM_FOR_HIRE_BANNER_URL, PREMIUM_PAID_JOB_BANNER_URL, PREMIUM_UNPAID_JOB_BANNER_URL, TOP_TO_RIGHT_EMOJI, TOP_TO_RIGHT_PREMIUM_EMOJI, UNPAID_JOB_BANNER_URL, jobTypes, jobs, logExtraData, roleIds } from "./data";
 import { Job, Post, jobType } from "./types";
 import { ErrorEmbed, InfoEmbed, SuccessEmbed } from "./embeds";
@@ -77,21 +77,21 @@ export function getModal(jobType: jobType, interactionId: string) {
     const jobDeadlineText = new TextInputBuilder()
         .setCustomId('jobDeadlineText')
         .setLabel('Job Deadline')
-        .setPlaceholder("Enter a deadline for your job.")
-        .setStyle(TextInputStyle.Short)
+        .setPlaceholder("Enter a job deadline date; if you don't have a deadline, enter n/a.")
+        .setStyle(TextInputStyle.Paragraph)
         .setMaxLength(128)
         .setRequired(false)
     const jobLocationText = new TextInputBuilder()
         .setCustomId('jobLocationText')
         .setLabel('Preferred Location')
-        .setPlaceholder("Tell your preferred work location (country/region).")
+        .setPlaceholder("Tell your preferred work location (country/region) or enter N/A for a worldwide talent search.")
         .setStyle(TextInputStyle.Paragraph)
         .setMaxLength(52)
         .setRequired(false)
 
     switch(value) {
         case jobTypes.commissionJob.value:
-            textInputs= [jobTitleText, jobDescText, jobBudgetText, jobDeadlineText]
+            textInputs= [jobTitleText, jobDescText, jobCommissionText, jobDeadlineText]
             break
         case jobTypes.forHireAd.value:
             textInputs= [jobTitleText, jobDescText, jobPortfolioText, jobBudgetText]
@@ -103,7 +103,7 @@ export function getModal(jobType: jobType, interactionId: string) {
             textInputs= [jobTitleText, jobDescText, jobDeadlineText]
             break
         case jobTypes.vipJob.value:
-            textInputs= [jobTitleText, jobDescText, jobBudgetText, jobDeadlineText]
+            textInputs= [jobTitleText, jobDescText, jobBudgetText, jobDeadlineText, jobLocationText]
             break
     }
     textInputs.map((textInput) => {
@@ -118,7 +118,22 @@ export function getModal(jobType: jobType, interactionId: string) {
 export function getModalCustomId(name: string) {
     return name.toLowerCase().replace(/\s+/g, '_') + '_modal'
 }
-export function getEmbedJob(post: Post) {
+export function getEmbedJob(postOg: Post) {
+    let post: Post = {
+        id: postOg.id,
+        category: postOg.category,
+        creatorId: postOg.creatorId,
+        type: postOg.type,
+        info: {
+            title: postOg.info.title,
+            desc: postOg.info.desc,
+            budget: postOg.info.budget == '' ? 'N/A' : postOg.info.budget,
+            deadline: postOg.info.deadline == '' ? 'N/A' : postOg.info.deadline,
+            location: postOg.info.location == '' ? 'N/A' : postOg.info.location,
+            portfolio: postOg.info.portfolio == '' ? 'N/A' : postOg.info.portfolio
+        },
+        stats: postOg.stats
+    }
     let premium = post.stats.premium
     let imgUri = ''
     let color = JHMColor
@@ -164,14 +179,33 @@ export function getEmbedJob(post: Post) {
       `${premium ? PERSON_PREMIUM_EMOJI: PERSON_EMOJI} ${post.info.title}`,
       `${INVISIBLE_CHARACTER}\n${premium ? DESCRIPTION_PREMIUM_EMOJI : DESCRIPTION_EMOJI} **Description**\n ${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.desc}\n${INVISIBLE_CHARACTER}`,
     ).setColor(color).setImage(imgUri)
-    if(post.category == jobTypes.paidJob.value || post.category == jobTypes.commissionJob.value || post.category == jobTypes.vipJob.value) embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
-    if (post.category == jobTypes.paidJob.value || post.category == jobTypes.commissionJob.value || post.category == jobTypes.unpaidJob.value || post.category == jobTypes.vipJob.value) embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: true });
-    if (post.category == jobTypes.paidJob.value) embed.addFields({ name: `${premium ? ID_PREMIUM_EMOJI : ID_EMOJI} **Location**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.location}`, inline: true });
-    if (post.category == jobTypes.forHireAd.value) embed.addFields({ name: `${premium ? ID_PREMIUM_EMOJI : ID_EMOJI} **Portfolio**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.portfolio}`, inline: true });
-    if(post.type == jobTypes.forHireAd.value) {
-        if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Freelancer**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: true });
-    } else {
-        if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: true });
+    switch (post.category) {
+        case jobTypes.paidJob.value:
+            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
+            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: true });
+            embed.addFields({ name: `${premium ? ID_PREMIUM_EMOJI : ID_EMOJI} **Location**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.location}`, inline: false });
+            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: true });
+            break;
+        case jobTypes.commissionJob.value:
+            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : post.type == jobTypes.commissionJob.value ? '**Commission**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
+            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: true });
+            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: false });
+            break;
+        case jobTypes.forHireAd.value:
+            embed.addFields({ name: `${premium ? ID_PREMIUM_EMOJI : ID_EMOJI} **Portfolio**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.portfolio}`, inline: true });
+            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : post.type == jobTypes.commissionJob.value ? '**Commission**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
+            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Freelancer**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: false });
+            break;
+        case jobTypes.unpaidJob.value: 
+            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: true });
+            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: true });
+            break;
+        case jobTypes.vipJob.value:
+            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : post.type == jobTypes.commissionJob.value ? '**Commission**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
+            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: true });
+            embed.addFields({ name: `${premium ? ID_PREMIUM_EMOJI : ID_EMOJI} **Location**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.location}`, inline: false });
+            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: true });
+            break;
     }
     embed.setFooter({text: `${post.id}`, iconURL: JHM_LOGO_URL});
     return embed;
@@ -224,11 +258,14 @@ export async function sendPost(post: Post) {
     if(post.type == jobTypes.vipJob.value) channelType = 'Text'
 
     const applyBtn = new ButtonBuilder().setCustomId('button_post_apply').setLabel('Apply').setEmoji('📝').setStyle(ButtonStyle.Success)
+    if(post.type == jobTypes.commissionJob.value || post.type == jobTypes.paidJob.value || post.type == jobTypes.unpaidJob.value) applyBtn.setEmoji('💼')
     const reportBtn = new ButtonBuilder().setCustomId('button_post_report').setLabel('Report').setEmoji('🚨').setStyle(ButtonStyle.Danger)
+    const referBtn = new ButtonBuilder().setCustomId('button_post_refer').setLabel('Refer').setEmoji('🤝').setStyle(ButtonStyle.Secondary)
 
     if(post.type == jobTypes.forHireAd.value) applyBtn.setLabel('Hire')
 
     const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(applyBtn,reportBtn)
+    if(post.type == jobTypes.paidJob.value) actionRow.addComponents(referBtn)
 
     const embed = getEmbedJob(post)
     let msg;
@@ -241,16 +278,16 @@ export async function sendPost(post: Post) {
                 }
             })
             const bumpBtn = new ButtonBuilder().setCustomId('button_post_bump').setEmoji('🚀').setLabel('Bump').setStyle(ButtonStyle.Primary)
-            const bumpBtnRow = new ActionRowBuilder<ButtonBuilder>().addComponents(bumpBtn)
-            msg = await (channel as ForumChannel).threads.create({name: '[' + getLabelByValue(post.category) + '] ' + post.info.title,message: {embeds: [embed], components: [actionRow]}, appliedTags: tags});
-            (channel as ForumChannel).threads.fetch(msg.id).then(thread => {thread?.send({components: [bumpBtnRow]})})
-            await updateMessage(post.id, {id: msg.id, url: msg.url})
-            await updateApproval(post.id)
+            const bumpBtnRow = new ActionRowBuilder<ButtonBuilder>().addComponents(bumpBtn);
+            (channel as ForumChannel).threads.create({name: post.info.title,message: {embeds: [embed], components: [actionRow]}, appliedTags: tags}).then((msg) => {
+                (channel as ForumChannel).threads.fetch(msg.id).then(async (thread) => {thread?.send({components: [bumpBtnRow]}); await updateMessage(post.id, {id: thread?.id || '', url: thread?.url || ''}); await updateApproval(post.id)})
+            })
         } else if(channelType =='Text') {
             const ping = getPing(post.category)
-            msg = await (channel as TextChannel).send({content: ping, embeds: [embed], components: [actionRow]})
-            await updateMessage(post.id, {id: msg.id, url: msg.url})
-            await updateApproval(post.id)
+            msg = (channel as TextChannel).send({content: ping, embeds: [embed], components: [actionRow]}).then(async (msg) => {
+                await updateMessage(post.id, {id: msg.id, url: msg.url})
+                await updateApproval(post.id)
+            })
         }
     } else {
         const approveBtn = new ButtonBuilder().setCustomId('button_post_approve').setLabel('Approve').setStyle(ButtonStyle.Success);
@@ -275,4 +312,24 @@ export const getNameByValue = (value: number) => {
     const keys = Object.keys(jobTypes) as JobTypeKeys[];
     const matchedKey = keys.find(key => jobTypes[key].value === value);
     return matchedKey ? jobTypes[matchedKey].name : undefined;
+}
+export function modifyEmbed(embed: Embed) {
+    const modifiedEmbed = new EmbedBuilder()
+    modifiedEmbed.setTitle(`~~*${embed.title}*~~`)
+    embed.fields.map((field) => {
+      modifiedEmbed.addFields(
+        {
+          name: `~~*${field.name}*~~`,
+          value: `~~*${field.value}*~~`,
+          inline: field.inline || false
+        } as APIEmbedField
+      )
+    })
+    modifiedEmbed.setDescription(`~~*${embed.description}*~~`)
+    if (embed.footer) {
+      modifiedEmbed.setFooter({text: `POST HAS CLOSED!`})
+    }
+    modifiedEmbed.setColor(embed.color)
+    modifiedEmbed.setImage(embed.image?.url || null)
+    return modifiedEmbed;
 }

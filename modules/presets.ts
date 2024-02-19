@@ -16,7 +16,7 @@ export function getMainEmbed(isMsg: boolean, ephemeral?: boolean) {
         .setCustomId('button_post_forhire')
         .setLabel(jobTypes.forHireAd.label)
         .setStyle(discord.ButtonStyle.Primary)
-        .setEmoji({name: '📝'})
+        .setEmoji({name: '👷'})
     const unpaidJob = new discord.ButtonBuilder()
         .setCustomId('button_post_unpaid')
         .setLabel(jobTypes.unpaidJob.label)

@@ -1,9 +1,11 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ComponentType, Message, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, italic } from "discord.js";
-import { Job, Post, jobType } from "./types";
-import { generateRandomKey, getEmbedJob, getModal, sendPost } from "./helpers";
-import { jobs, roleIds } from "./data";
+import discord, { Client, Guild, TextChannel } from 'discord.js'
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ComponentType, ForumChannel, Message, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, italic } from "discord.js";
+import { JHMClient, Job, Post, jobType } from "./types";
+import { generateRandomKey, getEmbedJob, getLogEmbed, getModal, modifyEmbed, sendPost } from "./helpers";
+import { bumpCooldown, cooldownTime, jobTypes, jobs, roleIds } from "./data";
 import { ErrorEmbed, InfoEmbed, SuccessEmbed } from "./embeds";
-import { addPost } from "./db";
+import { addPost, deletePost, getPosts, getPostsPremium, updateBump, updateFlag } from "./db";
+import { channels } from "..";
 
 export async function postJob(interaction: ButtonInteraction, jobType: jobType) {
     let brk = false
@@ -118,17 +120,18 @@ export async function postJob(interaction: ButtonInteraction, jobType: jobType) 
             x?.awaitMessageComponent<ComponentType.Button>({time: 1000_000}).then(async (i) => {
                 if(i.customId == 'confirmPost') {
                     await i.deferReply({ephemeral: true})
-                    await addPost(post)
-                    try {
-                        sendPost(post)
-                        if(post.stats.premium) {
-                            const embed = new SuccessEmbed('Posted!', 'Your post **'+ post.info.title + '** has been posted successfully!')
-                            i.editReply({embeds: [embed]})
-                        } else {
-                            const embed = new InfoEmbed('Sent for Approval!', 'Your post **'+ post.info.title + '** has been sent for approval and will be approved or rejected by one of our moderators!')
-                            i.editReply({embeds: [embed]})
-                        }
-                    } catch {console.log}
+                    addPost(post).then(() => {
+                        try {
+                            sendPost(post)
+                            if(post.stats.premium) {
+                                const embed = new SuccessEmbed('Posted!', 'Your post **'+ post.info.title + '** has been posted successfully!')
+                                i.editReply({embeds: [embed]})
+                            } else {
+                                const embed = new InfoEmbed('Sent for Approval!', 'Your post **'+ post.info.title + '** has been sent for approval and will be approved or rejected by one of our moderators!')
+                                i.editReply({embeds: [embed]})
+                            }
+                        } catch {console.log}
+                    })
                 } else if(i.customId == 'cancelPost') {
                     await i.deferReply({ephemeral: true})
                     const byeEmbed = new ErrorEmbed('Goodbye', 'We are sad to see you go. :wave:')
@@ -137,4 +140,112 @@ export async function postJob(interaction: ButtonInteraction, jobType: jobType) 
             }).finally(()=>{return})
         }).finally(()=>{return})
     } catch {console.log}
+}
+export async function closePost(post:Post) {
+    try {
+        let channel: discord.Channel | null  | undefined = null
+        if(post.type == jobTypes.vipJob.value) {
+            // Text Channel
+            channel = channels.vipJob;
+            try {
+                (channel as TextChannel).messages.fetch(post.stats.message.id).then((msg) => {
+                    const embed = msg.embeds[0]
+                    const applyBtn = new ButtonBuilder().setCustomId('button_post_apply').setLabel('Apply').setEmoji('📝').setStyle(ButtonStyle.Success).setDisabled(true)
+                    if(post.type == jobTypes.commissionJob.value || post.type == jobTypes.paidJob.value || post.type == jobTypes.unpaidJob.value) applyBtn.setEmoji('💼')
+                    const reportBtn = new ButtonBuilder().setCustomId('button_post_report').setLabel('Report').setEmoji('🚨').setStyle(ButtonStyle.Danger).setDisabled(true)
+                    const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(applyBtn, reportBtn)
+                    const modifiedEmbed = modifyEmbed(embed)
+                    msg.edit({embeds: [modifiedEmbed], components: [actionRow]})
+                })
+            } catch {console.log}
+        } else {
+            // Forum Channel
+            switch (post.type) {
+                case jobTypes.commissionJob.value:
+                    channel = channels.commissionJob
+                    break;
+                case jobTypes.forHireAd.value:
+                    channel = channels.forHireJob
+                    break;
+                case jobTypes.paidJob.value:
+                    channel = channels.paidJob
+                    break;
+                case jobTypes.unpaidJob.value:
+                    channel = channels.unpaidJob
+                    break;
+            }
+            try {
+                (channel as ForumChannel).threads.fetch(post.stats.message.id).then((thread) => {thread?.delete()})
+            } catch {console.log}
+        }
+    } catch {console.log}
+}
+export async function automation(client: Client) {
+    let posts = await getPosts()
+    let premiumPosts = await getPostsPremium()
+    premiumPosts.forEach((post) => {
+        if(Date.now() - post.stats.times.bumped >= bumpCooldown) {
+            let channel : discord.Channel | null | undefined = null
+            switch (post.category) {
+                case jobTypes.commissionJob.value:
+                    channel = channels.commissionJob
+                    break;
+                case jobTypes.paidJob.value:
+                    channel = channels.paidJob
+                    break;
+                case jobTypes.unpaidJob.value:
+                    channel = channels.unpaidJob
+                    break;
+                case jobTypes.forHireAd.value:
+                    channel = channels.forHireJob
+                    break;
+            }
+            try {
+                (channel as ForumChannel).threads.fetch(post.stats.message.id).then((thread) => {
+                    thread?.send(`Bump Message`).then((msg) => {msg.delete()})
+                })
+                updateBump(post.id)
+                const bumpLogPost = getLogEmbed(post.creatorId, post.category, post.creatorId, post.stats.message.url, true, 'Post Bumped! (Auto)');
+                (channels.bumpLogs as TextChannel).send({embeds: [bumpLogPost]})
+            } catch {console.log}
+        }
+    })
+    posts.forEach(async(post) => {
+        if(Date.now() - post.stats.times.creation >= cooldownTime) {
+            if(post.stats.flags.checked) {
+                if(Date.now() - post.stats.times.creation >= cooldownTime * 2) {
+                    await closePost(post)
+                    const embed = new InfoEmbed(
+                        `Post Deleted`,
+                        `Hey! We noticed your post **${post.info.title}** has been open for more than 4 days. Thus due to our policy we have automatically removed it.`
+                    )
+    
+                    const guild = client.guilds.cache.get(process.env.GUILDID || '')
+                    try {
+                        const member = await guild?.members.fetch(post.creatorId)
+                        if(member) {
+                            member.send({embeds: [embed]})
+                        }
+                    } catch {console.log}
+                }
+            } else {
+                await updateFlag(post.id)
+                const embed = new InfoEmbed(
+                    `Still Looking?`,
+                    `Hey! We noticed your post [${post.info.title}](${post.stats.message.url}) is still open. Are you still looking for someone?`
+                ).setFooter({text: post.id})
+                const yesBtn = new ButtonBuilder().setCustomId('button_ask_yes').setLabel(`Yes, I'm still Looking`).setStyle(ButtonStyle.Success)
+                const noBtn = new ButtonBuilder().setCustomId('button_ask_no').setLabel(`No, I've found someone`).setStyle(ButtonStyle.Secondary)
+                const actionRow = new ActionRowBuilder<ButtonBuilder>().setComponents(yesBtn, noBtn)
+
+                const guild = client.guilds.cache.get(process.env.GUILDID || '')
+                try {
+                    const member = await guild?.members.fetch(post.creatorId)
+                    if(member) {
+                        member.send({embeds: [embed], components: [actionRow]})
+                    }
+                } catch {console.log}
+            }
+        }
+    })
 }
