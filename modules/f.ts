@@ -185,7 +185,6 @@ export async function automation(client: Client) {
     let premiumPosts = await getPostsPremium()
     premiumPosts.forEach((post) => {
         if(Date.now() - post.stats.times.bumped >= bumpCooldown) {
-            if(!(post.stats.premium)) return
             let channel : discord.Channel | null | undefined = null
             switch (post.category) {
                 case jobTypes.commissionJob.value:
