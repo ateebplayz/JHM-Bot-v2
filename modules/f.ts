@@ -127,7 +127,7 @@ export async function postJob(interaction: ButtonInteraction, jobType: jobType) 
                                 const embed = new SuccessEmbed('Posted!', 'Your post **'+ post.info.title + '** has been posted successfully!')
                                 i.editReply({embeds: [embed]})
                             } else {
-                                const embed = new InfoEmbed('Sent for Approval!', 'Your post **'+ post.info.title + '** has been sent for approval and will be approved or rejected by one of our moderators!')
+                                const embed = new InfoEmbed('<:Staff:1109600553253752913> Your Post has been sent in for approval', 'Our staff team has recieved your post and we will review it as soon as possible.')
                                 i.editReply({embeds: [embed]})
                             }
                         } catch {console.log}

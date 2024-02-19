@@ -41,7 +41,7 @@ export async function execute(interaction: ButtonInteraction) {
                 (channels.reportLog as TextChannel).send({embeds: [embed]})
             }
         } catch {console.log}
-        mI.editReply({content: 'Succesfully reported post ' + post?.id})
+        mI.editReply({content: 'The post has been reported, and our moderation team will investigate.'})
     }).catch(console.log).finally(() => {return})
     return
 }

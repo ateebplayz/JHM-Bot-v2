@@ -54,7 +54,7 @@ export function getMainEmbed(isMsg: boolean, ephemeral?: boolean) {
     <:flecha11:1141389220863299655>⠀<#${channelIds.commissionJob}>: Workers earn a portion from sales, added to their base pay, reflecting a slice of each sale's earnings.\n\
     \n\
     <:flecha11:1141389220863299655> <#${channelIds.vipJob}> is for VIP users only. Whether you're recruiting in large numbers or seeking top-notch talent, this channel ensures a quick and efficient response for your agency or company.
-    \n\n
+    \n
     ⠀\n\
     <:bullet:1139565912568111148>⠀For detailed information, check: <#1200833388957945907>`)
         .setTitle('<:white_info:1142840597745520762>⠀Marketplace Information⠀<:white_info:1142840597745520762>')

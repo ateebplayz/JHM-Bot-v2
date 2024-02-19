@@ -2,7 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ModalB
 import { deletePost, getPost } from "../modules/db"
 import { getMainEmbed } from "../modules/presets"
 import { logExtraData } from "../modules/data"
-import { getEmbedJob, getLogEmbed } from "../modules/helpers"
+import { getEmbedJob, getLogEmbed, sleep } from "../modules/helpers"
 import { channels } from ".."
 import { ErrorEmbed } from "../modules/embeds"
 
@@ -47,6 +47,10 @@ export async function execute(interaction: ButtonInteraction) {
             }
         } catch {console.log}
         mI.editReply({content: 'Succesfully rejected post ' + post?.id})
-    }).catch(console.log).finally(() => {return})
+    }).catch(console.log).finally(() =>{})
+    await sleep(120000)
+    try {
+        interaction.message.delete()
+    } catch {console.log}
     return
 }

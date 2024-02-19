@@ -176,24 +176,24 @@ export function getEmbedJob(postOg: Post) {
             break;
     }
     const embed = new InfoEmbed(
-      `${premium ? PERSON_PREMIUM_EMOJI: PERSON_EMOJI} ${post.info.title}`,
+      `${premium ? PERSON_PREMIUM_EMOJI: PERSON_EMOJI} \n${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.title}`,
       `${INVISIBLE_CHARACTER}\n${premium ? DESCRIPTION_PREMIUM_EMOJI : DESCRIPTION_EMOJI} **Description**\n ${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.desc}\n${INVISIBLE_CHARACTER}`,
     ).setColor(color).setImage(imgUri)
     switch (post.type) {
         case jobTypes.paidJob.value:
-            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
-            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: true });
-            embed.addFields({ name: `${premium ? ID_PREMIUM_EMOJI : ID_EMOJI} **Location**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.location}`, inline: false });
+            embed.addFields({ name: `${premium ? CARD_PREMIUM_EMOJI : CARD_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
+            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: false });
+            embed.addFields({ name: `${premium ? DESCRIPTION_PREMIUM_EMOJI : DESCRIPTION_EMOJI} **Preferred Location**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.location}`, inline: true });
             if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: true });
             break;
         case jobTypes.commissionJob.value:
-            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : post.type == jobTypes.commissionJob.value ? '**Commission**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
+            embed.addFields({ name: `${premium ? CARD_PREMIUM_EMOJI : CARD_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : post.type == jobTypes.commissionJob.value ? '**Commission**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
             embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: true });
             if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: false });
             break;
         case jobTypes.forHireAd.value:
             embed.addFields({ name: `${premium ? ID_PREMIUM_EMOJI : ID_EMOJI} **Portfolio**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.portfolio}`, inline: true });
-            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : post.type == jobTypes.commissionJob.value ? '**Commission**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
+            embed.addFields({ name: `${premium ? CARD_PREMIUM_EMOJI : CARD_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : post.type == jobTypes.commissionJob.value ? '**Commission**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
             if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Freelancer**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: false });
             break;
         case jobTypes.unpaidJob.value: 
@@ -201,9 +201,9 @@ export function getEmbedJob(postOg: Post) {
             if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: true });
             break;
         case jobTypes.vipJob.value:
-            embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : post.type == jobTypes.commissionJob.value ? '**Commission**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
+            embed.addFields({ name: `${premium ? CARD_PREMIUM_EMOJI : CARD_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : post.type == jobTypes.commissionJob.value ? '**Commission**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
             embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: true });
-            embed.addFields({ name: `${premium ? ID_PREMIUM_EMOJI : ID_EMOJI} **Location**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.location}`, inline: false });
+            embed.addFields({ name: `${premium ? DESCRIPTION_PREMIUM_EMOJI : DESCRIPTION_EMOJI} **Preferred Location**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.location}`, inline: false });
             if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: true });
             break;
     }
@@ -280,7 +280,7 @@ export async function sendPost(post: Post) {
             const bumpBtn = new ButtonBuilder().setCustomId('button_post_bump').setEmoji('🚀').setLabel('Bump').setStyle(ButtonStyle.Primary)
             const bumpBtnRow = new ActionRowBuilder<ButtonBuilder>().addComponents(bumpBtn);
             (channel as ForumChannel).threads.create({name: post.info.title,message: {embeds: [embed], components: [actionRow]}, appliedTags: tags}).then((msg) => {
-                (channel as ForumChannel).threads.fetch(msg.id).then(async (thread) => {thread?.send({components: [bumpBtnRow]}); await updateMessage(post.id, {id: thread?.id || '', url: thread?.url || ''}); await updateApproval(post.id)})
+                (channel as ForumChannel).threads.fetch(msg.id).then(async (thread) => {thread?.send({content: "👉  Bump your post by clicking on the 'Bump' button, it will boost your post's visibility.", components: [bumpBtnRow]}); await updateMessage(post.id, {id: thread?.id || '', url: thread?.url || ''}); await updateApproval(post.id)})
             })
         } else if(channelType =='Text') {
             const ping = getPing(post.category)
@@ -332,4 +332,7 @@ export function modifyEmbed(embed: Embed) {
     modifiedEmbed.setColor(embed.color)
     modifiedEmbed.setImage(embed.image?.url || null)
     return modifiedEmbed;
+}
+export function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms))
 }
