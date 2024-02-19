@@ -56,7 +56,7 @@ export function getMainEmbed(isMsg: boolean, ephemeral?: boolean) {
     <:flecha11:1141389220863299655> <#${channelIds.vipJob}> is for VIP users only. Whether you're recruiting in large numbers or seeking top-notch talent, this channel ensures a quick and efficient response for your agency or company.
     \n\n
     ⠀\n\
-    <:bullet:1139565912568111148>⠀For detailed information, check: <#1141822304750411907>`)
+    <:bullet:1139565912568111148>⠀For detailed information, check: <#1200833388957945907>`)
         .setTitle('<:white_info:1142840597745520762>⠀Marketplace Information⠀<:white_info:1142840597745520762>')
         .setImage('https://images-ext-1.discordapp.net/external/i6zbYkJhC2bvSoELqxUjMdHrj5leUI_WT8IrootrtQk/https/i.ibb.co/kgsRHJn/JHM-Banner.png?format=webp&quality=lossless')
         .setFooter(null)
