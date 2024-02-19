@@ -2,6 +2,7 @@ import { ActionRowBuilder, ButtonInteraction, ModalBuilder, TextChannel, TextInp
 import { getLogEmbed } from "../modules/helpers"
 import { channels } from ".."
 import { getPost } from "../modules/db"
+import { InfoEmbed } from "../modules/embeds"
 
 export const data = {
     customId: 'button_post_report',
@@ -20,7 +21,23 @@ export async function execute(interaction: ButtonInteraction) {
         let post = await getPost(msgEmbed.footer?.text || '')
         try {
             if(post) {
-                const embed = getLogEmbed(post.creatorId, post.category, interaction.user.id, post.stats.message.url, false, 'Post Report', mI.fields.getField('text_post_reason_reject').value || '');
+                const embed = new InfoEmbed('⚠️  Post Report!', 
+                    `
+                        <:angle_jhm:1195349952679915592>Reported By:
+                        \n
+                        <:divider_jhm:1195349961483759628>User ID: ${interaction.user.id}
+                        <:divider_jhm:1195349961483759628>User Tag: <@!${interaction.user.id}>
+                        \n
+                        Post Owner:
+                        \n
+                        <:divider_jhm:1195349961483759628>User ID: ${post.creatorId}
+                        <:divider_jhm:1195349961483759628>User Tag: <@!${post.creatorId}> 
+                        \n
+                        <:angle_jhm:1195349952679915592> Post ID: ${post.id}
+                        <:angle_jhm:1195349952679915592> Post link: ${post.stats.message.url}
+                        \n
+                        <:angle_jhm:1195349952679915592> Reason: ${mI.fields.getField('text_post_reason_reject').value || ''}
+                    `);
                 (channels.reportLog as TextChannel).send({embeds: [embed]})
             }
         } catch {console.log}
