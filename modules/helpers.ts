@@ -1,5 +1,5 @@
 import { APIEmbedField, ActionRowBuilder, ButtonBuilder, ButtonStyle, Embed, EmbedBuilder, ForumChannel, GuildMember, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle } from "discord.js";
-import { CARD_EMOJI, CARD_PREMIUM_EMOJI, CLOCK_EMOJI, CLOCK_PREMIUM_EMOJI, COMMISSION_JOB_BANNER_URL, DESCRIPTION_EMOJI, DESCRIPTION_PREMIUM_EMOJI, FOR_HIRE_BANNER_URL, ID_EMOJI, ID_PREMIUM_EMOJI, INVISIBLE_CHARACTER, JHMColor, JHMColorPremium, JHM_LOGO_URL, JobTypeKeys, PAID_JOB_BANNER_URL, PERSON_EMOJI, PERSON_PREMIUM_EMOJI, PREMIUM_COMMISSION_JOB_BANNER_URL, PREMIUM_FOR_HIRE_BANNER_URL, PREMIUM_PAID_JOB_BANNER_URL, PREMIUM_UNPAID_JOB_BANNER_URL, TOP_TO_RIGHT_EMOJI, TOP_TO_RIGHT_PREMIUM_EMOJI, UNPAID_JOB_BANNER_URL, jobTypes, jobs, logExtraData, roleIds } from "./data";
+import { CARD_EMOJI, CARD_PREMIUM_EMOJI, CLOCK_EMOJI, CLOCK_PREMIUM_EMOJI, COMMISSION_JOB_BANNER_URL, DESCRIPTION_EMOJI, DESCRIPTION_PREMIUM_EMOJI, FOR_HIRE_BANNER_URL, ID_EMOJI, ID_PREMIUM_EMOJI, INVISIBLE_CHARACTER, JHMColor, JHMColorPremium, JHM_LOGO_URL, JobTypeKeys, PAID_JOB_BANNER_URL, PERSON_EMOJI, PERSON_PREMIUM_EMOJI, PREMIUM_COMMISSION_JOB_BANNER_URL, PREMIUM_FOR_HIRE_BANNER_URL, PREMIUM_PAID_JOB_BANNER_URL, PREMIUM_UNPAID_JOB_BANNER_URL, PREMIUM_VIP_HIRING_BANNER_URL, TOP_TO_RIGHT_EMOJI, TOP_TO_RIGHT_PREMIUM_EMOJI, UNPAID_JOB_BANNER_URL, jobTypes, jobs, logExtraData, roleIds } from "./data";
 import { Job, Post, jobType } from "./types";
 import { ErrorEmbed, InfoEmbed, SuccessEmbed } from "./embeds";
 import discord from 'discord.js'
@@ -169,7 +169,7 @@ export function getEmbedJob(postOg: Post) {
             break;
         case 5:
             if(premium) {
-                imgUri = PREMIUM_PAID_JOB_BANNER_URL
+                imgUri = PREMIUM_VIP_HIRING_BANNER_URL
             } else {
                 imgUri = ''
             }
@@ -179,7 +179,7 @@ export function getEmbedJob(postOg: Post) {
       `${premium ? PERSON_PREMIUM_EMOJI: PERSON_EMOJI} ${post.info.title}`,
       `${INVISIBLE_CHARACTER}\n${premium ? DESCRIPTION_PREMIUM_EMOJI : DESCRIPTION_EMOJI} **Description**\n ${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.desc}\n${INVISIBLE_CHARACTER}`,
     ).setColor(color).setImage(imgUri)
-    switch (post.category) {
+    switch (post.type) {
         case jobTypes.paidJob.value:
             embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
             embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: true });
