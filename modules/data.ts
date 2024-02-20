@@ -22,7 +22,8 @@ export const channelIds = {
     warnLogs: '1201955423499079700',
     sendLogs: '1201955458051735612',
     embedChannel: '1200834619478655046',
-    bumpLogs: '1208788684644679740'
+    bumpLogs: '1208788684644679740',
+    referLogs: '1209532006933856276'
 }
 export const ownerId = '1021402677650935918'
 export type JobTypeKeys = 'paidJob' | 'commissionJob' | 'forHireAd' | 'unpaidJob' | 'vipJob';

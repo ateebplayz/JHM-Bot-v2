@@ -1,6 +1,6 @@
 import discord from 'discord.js'
 import { Command } from './types'
-import { JHMColor } from './data'
+import { JHMColor, JHM_LOGO_URL } from './data'
 
 export class ErrorEmbed extends discord.EmbedBuilder {
     constructor(title: string, error: string) {
@@ -54,4 +54,4 @@ export class WarnEmbed extends discord.EmbedBuilder {
     }
 }
 
-export const footer: discord.EmbedFooterData = {text: "Jobs & Hiring, Market"}
+export const footer: discord.EmbedFooterData = {text: "Jobs & Hiring, Market", iconURL: JHM_LOGO_URL}

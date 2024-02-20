@@ -10,11 +10,10 @@ export const data = {
 export async function execute(interaction: ButtonInteraction) {
     const member = await interaction.guild?.members.fetch(interaction.user)
     if(member) {
-        if(member.roles.cache.has(roleIds.premium) || member.roles.cache.has(roleIds.vip)) {
+        if(member.roles.cache.has(roleIds.vip)) {
             postJob(interaction, jobTypes.vipJob)
         } else {
-            const embed = new ErrorEmbed('No permission', `You need to have the VIP or Premium role in order to create a special post!`)
-            return interaction.reply({embeds: [embed], ephemeral: true})
+            return interaction.reply({content: `This feature is exclusively for VIP users. If you're interested, purchase the VIP subscription at <#1197513765734842388>`, ephemeral: true})
         }
     }
     return

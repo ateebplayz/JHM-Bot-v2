@@ -12,7 +12,7 @@ import { automation } from './modules/f'
 
 dotenv.config()
 
-export let channels: { paidJob: discord.Channel | null | undefined; commissionJob: discord.Channel | null | undefined; forHireJob: discord.Channel | null | undefined; unpaidJob: discord.Channel | null | undefined; vipJob: discord.Channel | null | undefined, jobApproval: discord.Channel | null | undefined, jobApprovalLog: discord.Channel | null | undefined, reportLog: discord.Channel | null | undefined, dwcChannel: discord.Channel | null | undefined, scamChannel: discord.Channel | null | undefined, warnLog: discord.Channel | null | undefined, sendLogs: discord.Channel | null | undefined, bumpLogs: discord.Channel | null | undefined} = {
+export let channels: { paidJob: discord.Channel | null | undefined; commissionJob: discord.Channel | null | undefined; forHireJob: discord.Channel | null | undefined; unpaidJob: discord.Channel | null | undefined; vipJob: discord.Channel | null | undefined, jobApproval: discord.Channel | null | undefined, jobApprovalLog: discord.Channel | null | undefined, reportLog: discord.Channel | null | undefined, dwcChannel: discord.Channel | null | undefined, scamChannel: discord.Channel | null | undefined, warnLog: discord.Channel | null | undefined, sendLogs: discord.Channel | null | undefined, bumpLogs: discord.Channel | null | undefined, referLogs: discord.Channel| null | undefined} = {
     paidJob: null,
     commissionJob: null,
     forHireJob: null,
@@ -25,7 +25,8 @@ export let channels: { paidJob: discord.Channel | null | undefined; commissionJo
     scamChannel: null,
     warnLog: null,
     sendLogs: null,
-    bumpLogs: null
+    bumpLogs: null,
+    referLogs: null,
 }
 const client = new discord.Client({intents: [discord.GatewayIntentBits.Guilds, discord.GatewayIntentBits.MessageContent, discord.GatewayIntentBits.GuildMessages, discord.GatewayIntentBits.DirectMessages]}) as JHMClient
 client.commands = new discord.Collection<string, Command>()
@@ -177,6 +178,7 @@ client.once('ready', async (readyClient) => {
     channels.warnLog = await client.channels.cache.find(channel => channel.id === channelIds.warnLogs)
     channels.sendLogs = await client.channels.cache.find(channel => channel.id === channelIds.sendLogs)
     channels.bumpLogs = await client.channels.cache.find(channel => channel.id === channelIds.bumpLogs)
+    channels.referLogs = await client.channels.cache.find(channel => channel.id === channelIds.referLogs)
     readyClient.user.setPresence({
         activities: [{
             name: 'JHM Server & Posts',

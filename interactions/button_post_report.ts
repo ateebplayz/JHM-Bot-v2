@@ -11,7 +11,7 @@ export const data = {
 export async function execute(interaction: ButtonInteraction) {
     let msg = interaction.message
     let msgEmbed = msg.embeds[0]
-    const reason = new TextInputBuilder().setCustomId('text_post_reason_reject').setLabel('Reason for Report').setRequired(true).setStyle(TextInputStyle.Paragraph).setPlaceholder('Reason for Rejection')
+    const reason = new TextInputBuilder().setCustomId('text_post_reason_reject').setLabel('Reason for Report').setRequired(true).setStyle(TextInputStyle.Paragraph).setPlaceholder('Kindly provide the reason for reporting this post.')
     const actionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(reason)
     const modal = new ModalBuilder().setCustomId('modal_post_report_' + interaction.id).setTitle('Post Report Reason').addComponents(actionRow)
     await interaction.showModal(modal)

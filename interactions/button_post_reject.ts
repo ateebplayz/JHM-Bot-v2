@@ -38,7 +38,7 @@ export async function execute(interaction: ButtonInteraction) {
                 await deletePost(post.id)
                 const embed = getLogEmbed(post.creatorId, post.category, mI.user.id, '', false, 'Post Rejected', mI.fields.getField('text_post_reason_reject').value);
                 const member = interaction.guild?.members.fetch(post.creatorId).then((mem) => {
-                    const embed = new ErrorEmbed('Post Rejected', `Your post **${post?.info.title}** has been rejected by one of our moderators.`).addFields({name: 'Reason', value: mI.fields.getField('text_post_reason_reject').value})
+                    const embed = new ErrorEmbed('Post Rejected', `Your post **${post?.info.title}** has been Rejected!`).addFields({name: "Administrator's Reason", value: mI.fields.getField('text_post_reason_reject').value})
                     try {
                         mem.send({embeds: [embed]})
                     } catch {console.log}

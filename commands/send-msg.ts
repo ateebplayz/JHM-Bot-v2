@@ -24,7 +24,8 @@ export async function execute(interaction:CommandInteraction) {
 
     try {
         const logEmbed = new InfoEmbed('New Sent Message', `**Author** : <@!${interaction.user.id}>\n**User** : <@!${user?.id}>\n**Message** : ${msg}`)
-        if(user) user.send({content: msg || 'An error occured. Our moderation team tried to contact you'})
+        const embed = new InfoEmbed('Notice from the Administration.', msg || 'An error occured. Our moderation team tried to contact you')
+        if(user) user.send({embeds: [embed]})
         interaction.editReply({content: 'Message has been successfully sent to <@!' + user?.id + '>'});
         (channels.sendLogs as TextChannel).send({embeds: [logEmbed]})
     } catch {console.log}

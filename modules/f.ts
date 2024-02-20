@@ -75,7 +75,7 @@ export async function postJob(interaction: ButtonInteraction, jobType: jobType) 
                         if(!(value.value == '')) post.info.deadline = value.value
                         break
                     case 'jobLocationText':
-                        if(!(value.value == '')) post.info.location == value.value
+                        if(!(value.value == '')) post.info.location = value.value
                         break
                 }
             })
@@ -124,11 +124,9 @@ export async function postJob(interaction: ButtonInteraction, jobType: jobType) 
                         try {
                             sendPost(post)
                             if(post.stats.premium) {
-                                const embed = new SuccessEmbed('Posted!', 'Your post **'+ post.info.title + '** has been posted successfully!')
-                                i.editReply({embeds: [embed]})
+                                i.editReply({content: `<:check_yes:1069615466617770044> Your post has been automatically approved because of your premium status!`})
                             } else {
-                                const embed = new InfoEmbed('<:Staff:1109600553253752913> Your Post has been sent in for approval', 'Our staff team has recieved your post and we will review it as soon as possible.')
-                                i.editReply({embeds: [embed]})
+                                i.editReply({content: `<:check_yes:1069615466617770044> Your post has been sent in for approval. You will be notified when it goes through.`})
                             }
                         } catch {console.log}
                     })

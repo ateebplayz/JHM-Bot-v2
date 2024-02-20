@@ -17,8 +17,10 @@ export async function execute(interaction: ButtonInteraction) {
         let txt = `${name}`
         if(post?.type !== jobTypes.forHireAd.value) {
             txt += ` opportunity`
-        } 
-        interaction.editReply({content: `The ${txt} has been posted by <@!${post?.creatorId}> (${member?.user.username}). To apply, please reach out directly to their DMs.`})
+            interaction.editReply({content: `The ${txt} has been posted by <@!${post?.creatorId}> (${member?.user.username}). To apply, please reach out directly to their DMs.`})
+        } else {
+            interaction.editReply({content: `The for-hire ad has been posted by <@!${post?.creatorId}> (${member?.user.username}). To connect, please reach out directly to their DMs.`})
+        }
     } catch {console.log}
     return
 }

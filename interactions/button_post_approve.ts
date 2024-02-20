@@ -12,6 +12,7 @@ export const data = {
     type: 'component'
 }
 export async function execute(interaction: ButtonInteraction) {
+    let msg2:any;
     let msg = interaction.message
     let msgEmbed = msg.embeds[0]
     let post = await getPost(msgEmbed.footer?.text || '')
@@ -31,8 +32,6 @@ export async function execute(interaction: ButtonInteraction) {
         if(post) {
             msg.edit({embeds: [getEmbedJob(post).addFields(logExtraData(post))], components: [actionRow]})
             await updateApproval(post.id)
-            const embed = getLogEmbed(post.creatorId, post.category, interaction.user.id, post.stats.message.url, true, 'Post Approved');
-            (channels.jobApprovalLog as TextChannel).send({embeds: [embed]});
             const embed2 = getEmbedJob(post)
             let channel: discord.Channel | null | undefined;
             let channelType: 'Forum' | 'Text' = 'Forum'
@@ -54,7 +53,6 @@ export async function execute(interaction: ButtonInteraction) {
                     break
             }
             if(post.type == jobTypes.vipJob.value) {channelType = 'Text'}
-            let msg2;
             const applyBtn = new ButtonBuilder().setCustomId('button_post_apply').setLabel('Apply').setEmoji('📝').setStyle(ButtonStyle.Success)
             if(post.type == jobTypes.commissionJob.value || post.type == jobTypes.paidJob.value || post.type == jobTypes.unpaidJob.value) applyBtn.setEmoji('💼')
             const reportBtn = new ButtonBuilder().setCustomId('button_post_report').setLabel('Report').setEmoji('🚨').setStyle(ButtonStyle.Danger)
@@ -64,6 +62,7 @@ export async function execute(interaction: ButtonInteraction) {
 
             const actionRow2 = new ActionRowBuilder<ButtonBuilder>().addComponents(applyBtn,reportBtn)
             if(post.type == jobTypes.paidJob.value) actionRow2.addComponents(referBtn)
+            const ping = getPing(post.category)
             if(channelType == 'Forum') {
                 let tags: Array<string> = [];
                 (channel as ForumChannel).availableTags.map(tag => {
@@ -73,19 +72,20 @@ export async function execute(interaction: ButtonInteraction) {
                 })
                 const bumpBtn = new ButtonBuilder().setCustomId('button_post_bump').setEmoji('🚀').setLabel('Bump').setStyle(ButtonStyle.Primary)
                 const bumpBtnRow = new ActionRowBuilder<ButtonBuilder>().addComponents(bumpBtn)
-                msg2 = await (channel as ForumChannel).threads.create({name: post.info.title,message: {embeds: [embed2],components:[actionRow2]}, appliedTags: tags});
+                msg2 = await (channel as ForumChannel).threads.create({name: post.info.title,message: {content: ping, embeds: [embed2],components:[actionRow2]}, appliedTags: tags});
                 (channel as ForumChannel).threads.fetch(msg2.id).then(thread => {thread?.send({content:"👉  Bump your post by clicking on the 'Bump' button, it will boost your post's visibility.", components: [bumpBtnRow]})})
             } else {
-                const ping = getPing(post.category)
                 msg2 = await (channel as TextChannel).send({content: ping, embeds: [embed2], components: [actionRow2]})
             }
             await updateMessage(post.id, {id: msg2.id, url: msg2.url})
             await updateApproval(post.id)
+            const embed = getLogEmbed(post.creatorId, post.category, interaction.user.id, msg2.url, true, 'Post Approved');
+            (channels.jobApprovalLog as TextChannel).send({embeds: [embed]});
         }
     } catch {console.log}
     try {
         const member = interaction.guild?.members.fetch(post?.creatorId || '').then((mem) => {
-            const embed = new SuccessEmbed('Post Approved', `Your post ${post?.stats.message.url} has been approved by one of our moderators. Congratulations! :partying_face:`).setFooter({text: post?.id || 'X', iconURL: JHM_LOGO_URL})
+            const embed = new SuccessEmbed('Post Approved', `Your post ${msg2.url} has been approved by one of our moderators. Congratulations! :partying_face:`).setFooter({text: post?.id || 'X', iconURL: JHM_LOGO_URL})
             try {
                 mem.send({embeds: [embed]})
             } catch {console.log}

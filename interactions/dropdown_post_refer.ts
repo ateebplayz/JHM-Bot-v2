@@ -23,6 +23,7 @@ export async function execute(interaction: UserSelectMenuInteraction) {
                 embeds: [embed],
                 components: [actionRow]
             })
+            const embed2 = new InfoEmbed(`New Referral`, `**Author** : <@!${interaction.user.id}> (${interaction.user.id}) \n**Post Referred** : ${post.stats.message.url}\n**Post Referrer** : <@!${userId}> (${userId})\n**Post** : ${post.stats.message.url}`);
             interaction.editReply(`Successfully sent a referral to <@!${user?.id}>`)
         }
     } catch {

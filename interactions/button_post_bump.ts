@@ -11,10 +11,12 @@ export const data = {
 }
 export async function execute(interaction: ButtonInteraction) {
     await interaction.deferReply({ephemeral:true})
+
     try {
         const post = await getPost((await (interaction.channel as ThreadChannel).messages.fetch()).last()?.embeds[0].footer?.text || 'XXXX-XXXX-XXXX')
         if(post) {
             if(interaction.user.id !== post.creatorId) return interaction.editReply({content: 'You are not the owner of this post. You may not bump this post.'})
+            if(post.stats.premium) return interaction.editReply({content: `Your post will be auto bumped because of your premium status. There is no need for manual action.`})
             const timerStart = Date.now()
             if(timerStart - post.stats.times.bumped > bumpCooldown) {
                 if(!(post.stats.flags.checked)) {

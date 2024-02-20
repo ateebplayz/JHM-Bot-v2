@@ -22,10 +22,11 @@ export async function execute(interaction: ButtonInteraction) {
         try {
             const userId = interaction.message.embeds[0].author?.name
             if(post) {
-                const referReport = new ErrorEmbed(`Refer Report`, `**Author** : <@!${interaction.user.id}> (${interaction.user.id}) \n**Post Referred** : ${post.stats.message}\n**Post Referrer** : <@!${userId}> (${userId})`);
+                const referReport = new ErrorEmbed(`Refer Report`, `**Author** : <@!${interaction.user.id}> (${interaction.user.id}) \n**Post Referred** : ${post.stats.message.url}\n**Post Referrer** : <@!${userId}> (${userId})\n**Reason** : ${mI.fields.getField('text_refer_reason').value}`);
                 (channels.reportLog as TextChannel).send({embeds: [referReport]})
             }
         } catch {console.log}
+        mI.editReply(`Thank you for your report. Our Moderation team will review it and keep you up to date.`)
     }).catch(()=>{console.log})
     return
 }
