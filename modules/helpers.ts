@@ -3,7 +3,7 @@ import { CARD_EMOJI, CARD_PREMIUM_EMOJI, CLOCK_EMOJI, CLOCK_PREMIUM_EMOJI, COMMI
 import { Job, Post, jobType } from "./types";
 import { ErrorEmbed, InfoEmbed, SuccessEmbed } from "./embeds";
 import discord from 'discord.js'
-import { channels } from "..";
+import { channels, client } from "..";
 import { updateApproval, updateMessage } from "./db";
 export function checkVipStatus(member: GuildMember | undefined) {
     if(!member) return false
@@ -282,10 +282,11 @@ export async function sendPost(post: Post) {
                     tags.push(tag.id)
                 }
             })
+            const member = await (await client.guilds.fetch(process.env.GUILDID || '')).members.fetch(post.creatorId)
             const bumpBtn = new ButtonBuilder().setCustomId('button_post_bump').setEmoji('🚀').setLabel('Bump').setStyle(ButtonStyle.Primary)
             const bumpBtnRow = new ActionRowBuilder<ButtonBuilder>().addComponents(bumpBtn);
             (channel as ForumChannel).threads.create({name: post.info.title,message: {content: ping,embeds: [embed], components: [actionRow]}, appliedTags: tags}).then((msg) => {
-                (channel as ForumChannel).threads.fetch(msg.id).then(async (thread) => {thread?.send({content: "👉  Bump your post by clicking on the 'Bump' button, it will boost your post's visibility.", components: [bumpBtnRow]}); await updateMessage(post.id, {id: thread?.id || '', url: thread?.url || ''}); await updateApproval(post.id)})
+                (channel as ForumChannel).threads.fetch(msg.id).then(async (thread) => {thread?.send({content: "👉  Bump your post by clicking on the 'Bump' button, it will boost your post's visibility.", components: [bumpBtnRow]}); await updateMessage(post.id, {id: thread?.id || '', url: thread?.url || ''}); await updateApproval(post.id); if(member) thread?.members.add(member)});
             })
         } else if(channelType =='Text') {
             msg = (channel as TextChannel).send({content: ping, embeds: [embed], components: [actionRow]}).then(async (msg) => {

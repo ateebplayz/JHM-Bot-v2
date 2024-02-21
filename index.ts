@@ -28,7 +28,7 @@ export let channels: { paidJob: discord.Channel | null | undefined; commissionJo
     bumpLogs: null,
     referLogs: null,
 }
-const client = new discord.Client({intents: [discord.GatewayIntentBits.Guilds, discord.GatewayIntentBits.MessageContent, discord.GatewayIntentBits.GuildMessages, discord.GatewayIntentBits.DirectMessages]}) as JHMClient
+export const client = new discord.Client({intents: [discord.GatewayIntentBits.Guilds, discord.GatewayIntentBits.MessageContent, discord.GatewayIntentBits.GuildMessages, discord.GatewayIntentBits.DirectMessages]}) as JHMClient
 client.commands = new discord.Collection<string, Command>()
 client.interactions = new discord.Collection<string, InteractionHandler>()
 client.cooldowns = new CooldownHandler()

@@ -1,6 +1,7 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, UserSelectMenuInteraction } from "discord.js"
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, TextChannel, UserSelectMenuInteraction } from "discord.js"
 import { InfoEmbed } from "../modules/embeds"
 import { getPost } from "../modules/db"
+import { channels } from ".."
 
 export const data = {
     customId: 'dropdown_post_refer',
@@ -24,6 +25,7 @@ export async function execute(interaction: UserSelectMenuInteraction) {
                 components: [actionRow]
             })
             const embed2 = new InfoEmbed(`New Referral`, `**Author** : <@!${interaction.user.id}> (${interaction.user.id}) \n**Post Referred** : ${post.stats.message.url}\n**Post Referrer** : <@!${userId}> (${userId})\n**Post** : ${post.stats.message.url}`);
+            (channels.referLogs as TextChannel).send({embeds: [embed2]})
             interaction.editReply(`Successfully sent a referral to <@!${user?.id}>`)
         }
     } catch {
