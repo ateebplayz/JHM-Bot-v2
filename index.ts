@@ -12,8 +12,9 @@ import { automation } from './modules/f'
 
 dotenv.config()
 
-export let channels: { paidJob: discord.Channel | null | undefined; commissionJob: discord.Channel | null | undefined; forHireJob: discord.Channel | null | undefined; unpaidJob: discord.Channel | null | undefined; vipJob: discord.Channel | null | undefined, jobApproval: discord.Channel | null | undefined, jobApprovalLog: discord.Channel | null | undefined, reportLog: discord.Channel | null | undefined, dwcChannel: discord.Channel | null | undefined, scamChannel: discord.Channel | null | undefined, warnLog: discord.Channel | null | undefined, sendLogs: discord.Channel | null | undefined, bumpLogs: discord.Channel | null | undefined, referLogs: discord.Channel| null | undefined} = {
+export let channels: { paidJob: discord.Channel | null | undefined; paidJob2: discord.Channel | null | undefined; commissionJob: discord.Channel | null | undefined; forHireJob: discord.Channel | null | undefined; unpaidJob: discord.Channel | null | undefined; vipJob: discord.Channel | null | undefined, jobApproval: discord.Channel | null | undefined, jobApprovalLog: discord.Channel | null | undefined, reportLog: discord.Channel | null | undefined, dwcChannel: discord.Channel | null | undefined, scamChannel: discord.Channel | null | undefined, warnLog: discord.Channel | null | undefined, sendLogs: discord.Channel | null | undefined, bumpLogs: discord.Channel | null | undefined, referLogs: discord.Channel| null | undefined} = {
     paidJob: null,
+    paidJob2: null,
     commissionJob: null,
     forHireJob: null,
     unpaidJob: null,
@@ -179,6 +180,7 @@ client.once('ready', async (readyClient) => {
     channels.sendLogs = await client.channels.cache.find(channel => channel.id === channelIds.sendLogs)
     channels.bumpLogs = await client.channels.cache.find(channel => channel.id === channelIds.bumpLogs)
     channels.referLogs = await client.channels.cache.find(channel => channel.id === channelIds.referLogs)
+    channels.paidJob2 = await client.channels.cache.find(channel => channel.id === channelIds.paidJob2)
     readyClient.user.setPresence({
         activities: [{
             name: 'JHM Server & Posts',

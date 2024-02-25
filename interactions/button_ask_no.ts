@@ -1,5 +1,5 @@
 import { ButtonInteraction } from "discord.js"
-import { getPost } from "../modules/db"
+import { deletePost, getPost } from "../modules/db"
 import { closePost } from "../modules/f"
 
 export const data = {
@@ -12,6 +12,7 @@ export async function execute(interaction: ButtonInteraction) {
     const post = await getPost(postId || '')
     if(post) {
         await closePost(post)
+        await deletePost(post.id)
         interaction.editReply(`<:done:1132644555834011748> Your post has been deleted. Thank you for using JHM.`)
     }
     return

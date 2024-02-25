@@ -181,7 +181,8 @@ export async function closePost(post:Post) {
 export async function automation(client: Client) {
     let posts = await getPosts()
     let premiumPosts = await getPostsPremium()
-    premiumPosts.forEach((post) => {
+    posts.forEach((post) => {
+        if(!(post.stats.premium)) return
         if(Date.now() - post.stats.times.bumped >= bumpCooldown) {
             let channel : discord.Channel | null | undefined = null
             switch (post.category) {

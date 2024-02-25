@@ -30,6 +30,7 @@ export async function execute(interaction:CommandInteraction) {
                 return interaction.editReply({embeds: [embed]})
             } else {
                 await closePost(post)
+                await deletePost(post.id)
                 return interaction.editReply(`Successfully deleted post with ID ${post.id}`)
             }
         } else {

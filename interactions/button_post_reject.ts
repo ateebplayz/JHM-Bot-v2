@@ -34,7 +34,7 @@ export async function execute(interaction: ButtonInteraction) {
         let post = await getPost(msgEmbed.footer?.text || '')
         try {
             if(post) {
-                msg.edit({embeds: [getEmbedJob(post).addFields(logExtraData(post))], components: [actionRow]})
+                msg.edit({embeds: [getEmbedJob(post).addFields(await logExtraData(post))], components: [actionRow]})
                 await deletePost(post.id)
                 const embed = getLogEmbed(post.creatorId, post.category, mI.user.id, '', false, 'Post Rejected', mI.fields.getField('text_post_reason_reject').value);
                 const member = interaction.guild?.members.fetch(post.creatorId).then((mem) => {
@@ -47,6 +47,7 @@ export async function execute(interaction: ButtonInteraction) {
             }
         } catch {console.log}
         mI.editReply({content: 'Succesfully rejected post ' + post?.id})
+        await deletePost(post?.id || '')
     }).catch(console.log).finally(() =>{})
     await sleep(120000)
     try {

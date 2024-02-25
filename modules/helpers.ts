@@ -1,5 +1,5 @@
 import { APIEmbedField, ActionRowBuilder, ButtonBuilder, ButtonStyle, Embed, EmbedBuilder, ForumChannel, GuildMember, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle } from "discord.js";
-import { CARD_EMOJI, CARD_PREMIUM_EMOJI, CLOCK_EMOJI, CLOCK_PREMIUM_EMOJI, COMMISSION_JOB_BANNER_URL, DESCRIPTION_EMOJI, DESCRIPTION_PREMIUM_EMOJI, FOR_HIRE_BANNER_URL, ID_EMOJI, ID_PREMIUM_EMOJI, INVISIBLE_CHARACTER, JHMColor, JHMColorPremium, JHM_LOGO_URL, JobTypeKeys, PAID_JOB_BANNER_URL, PERSON_EMOJI, PERSON_PREMIUM_EMOJI, PREMIUM_COMMISSION_JOB_BANNER_URL, PREMIUM_FOR_HIRE_BANNER_URL, PREMIUM_PAID_JOB_BANNER_URL, PREMIUM_UNPAID_JOB_BANNER_URL, PREMIUM_VIP_HIRING_BANNER_URL, TOP_TO_RIGHT_EMOJI, TOP_TO_RIGHT_PREMIUM_EMOJI, UNPAID_JOB_BANNER_URL, jobTypes, jobs, logExtraData, roleIds } from "./data";
+import { CARD_EMOJI, CARD_PREMIUM_EMOJI, CLOCK_EMOJI, CLOCK_PREMIUM_EMOJI, COMMISSION_JOB_BANNER_URL, DESCRIPTION_EMOJI, DESCRIPTION_PREMIUM_EMOJI, FOR_HIRE_BANNER_URL, ID_EMOJI, ID_PREMIUM_EMOJI, INVISIBLE_CHARACTER, JHMColor, JHMColorPremium, JHM_LOGO_URL, JobTypeKeys, PAID_JOB_BANNER_URL, PERSON_EMOJI, PERSON_PREMIUM_EMOJI, PREMIUM_COMMISSION_JOB_BANNER_URL, PREMIUM_FOR_HIRE_BANNER_URL, PREMIUM_PAID_JOB_BANNER_URL, PREMIUM_UNPAID_JOB_BANNER_URL, PREMIUM_VIP_HIRING_BANNER_URL, TOP_TO_RIGHT_EMOJI, TOP_TO_RIGHT_PREMIUM_EMOJI, UNPAID_JOB_BANNER_URL, guildId, jobTypes, jobs, logExtraData, roleIds } from "./data";
 import { Job, Post, jobType } from "./types";
 import { ErrorEmbed, InfoEmbed, SuccessEmbed } from "./embeds";
 import discord from 'discord.js'
@@ -178,36 +178,37 @@ export function getEmbedJob(postOg: Post) {
     const embed = new InfoEmbed(
       `${premium ? PERSON_PREMIUM_EMOJI: PERSON_EMOJI} ${post.info.title}`,
       `${INVISIBLE_CHARACTER}\n${premium ? DESCRIPTION_PREMIUM_EMOJI : DESCRIPTION_EMOJI} **Description**\n ${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.desc}\n${INVISIBLE_CHARACTER}`,
-    ).setColor(color).setImage(imgUri)
+    ).setColor(color).setImage(imgUri);
+    let memberUsername = (client.guilds.cache.get(guildId)?.members.cache.get(post.creatorId))?.user.username
     switch (post.type) {
         case jobTypes.paidJob.value:
             embed.addFields({ name: `${premium ? CARD_PREMIUM_EMOJI : CARD_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
             embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: true });
             embed.addFields({name:'\u200b', value: '\u200b', inline: true})
             embed.addFields({ name: `${premium ? DESCRIPTION_PREMIUM_EMOJI : DESCRIPTION_EMOJI} **Preferred Location**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.location}`, inline: true });
-            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: true });
+            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${memberUsername}`, inline: true });
             embed.addFields({name:'\u200b', value: '\u200b', inline: true})
             break;
         case jobTypes.commissionJob.value:
             embed.addFields({ name: `${premium ? CARD_PREMIUM_EMOJI : CARD_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : post.type == jobTypes.commissionJob.value ? '**Commission**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
             embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: true });
-            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: false });
+            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${memberUsername}`, inline: false });
             break;
         case jobTypes.forHireAd.value:
             embed.addFields({ name: `${premium ? ID_PREMIUM_EMOJI : ID_EMOJI} **Portfolio**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.portfolio}`, inline: true });
             embed.addFields({ name: `${premium ? CARD_PREMIUM_EMOJI : CARD_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : post.type == jobTypes.commissionJob.value ? '**Commission**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
-            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Freelancer**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: false });
+            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Freelancer**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${memberUsername}`, inline: false });
             break;
         case jobTypes.unpaidJob.value: 
             embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: true });
-            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: true });
+            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${memberUsername}`, inline: true });
             break;
         case jobTypes.vipJob.value:
             embed.addFields({ name: `${premium ? CARD_PREMIUM_EMOJI : CARD_EMOJI} ${post.type == jobTypes.forHireAd.value ? '**Payment Method**' : post.type == jobTypes.commissionJob.value ? '**Commission**' : '**Budget**'}`, value: `${premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.budget}`, inline: true });
             embed.addFields({ name: `${premium ? CLOCK_PREMIUM_EMOJI : CLOCK_EMOJI} **Deadline**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.deadline}`, inline: true });
             embed.addFields({name:'\u200b', value: '\u200b', inline: true})
             embed.addFields({ name: `${premium ? DESCRIPTION_PREMIUM_EMOJI : DESCRIPTION_EMOJI} **Preferred Location**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${post.info.location}`, inline: true });
-            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} <@${post.creatorId}>`, inline: true });
+            if (post.creatorId !== 'N/A') embed.addFields({ name: `${premium ? PERSON_PREMIUM_EMOJI : PERSON_EMOJI} **Client**`, value: `${ premium ? TOP_TO_RIGHT_PREMIUM_EMOJI : TOP_TO_RIGHT_EMOJI} ${memberUsername}`, inline: true });
             embed.addFields({name:'\u200b', value: '\u200b', inline: true})
             break;
     }
@@ -265,6 +266,7 @@ export async function sendPost(post: Post) {
     if(post.type == jobTypes.commissionJob.value || post.type == jobTypes.paidJob.value || post.type == jobTypes.unpaidJob.value) applyBtn.setEmoji('💼')
     const reportBtn = new ButtonBuilder().setCustomId('button_post_report').setLabel('Report').setEmoji('🚨').setStyle(ButtonStyle.Danger)
     const referBtn = new ButtonBuilder().setCustomId('button_post_refer').setLabel('Refer').setEmoji('🤝').setStyle(ButtonStyle.Secondary)
+    const gearButton = new ButtonBuilder().setCustomId('button_post_help').setEmoji('⚙️').setStyle(ButtonStyle.Secondary)
 
     if(post.type == jobTypes.forHireAd.value) applyBtn.setLabel('Hire')
 
@@ -282,12 +284,15 @@ export async function sendPost(post: Post) {
                     tags.push(tag.id)
                 }
             })
-            const member = await (await client.guilds.fetch(process.env.GUILDID || '')).members.fetch(post.creatorId)
             const bumpBtn = new ButtonBuilder().setCustomId('button_post_bump').setEmoji('🚀').setLabel('Bump').setStyle(ButtonStyle.Primary)
             const bumpBtnRow = new ActionRowBuilder<ButtonBuilder>().addComponents(bumpBtn);
             (channel as ForumChannel).threads.create({name: post.info.title,message: {content: ping,embeds: [embed], components: [actionRow]}, appliedTags: tags}).then((msg) => {
-                (channel as ForumChannel).threads.fetch(msg.id).then(async (thread) => {thread?.send({content: "👉  Bump your post by clicking on the 'Bump' button, it will boost your post's visibility.", components: [bumpBtnRow]}); await updateMessage(post.id, {id: thread?.id || '', url: thread?.url || ''}); await updateApproval(post.id); if(member) thread?.members.add(member)});
+                (channel as ForumChannel).threads.fetch(msg.id).then(async (thread) => {thread?.send({content: "👉  Bump your post by clicking on the 'Bump' button, it will boost your post's visibility.", components: [bumpBtnRow]}); await updateMessage(post.id, {id: thread?.id || '', url: thread?.url || ''}); await updateApproval(post.id);});
             })
+            if(post.type == jobTypes.paidJob.value) {
+                const actionRow2 = new ActionRowBuilder<ButtonBuilder>().setComponents(applyBtn, gearButton);
+                (channels.paidJob2 as ForumChannel).threads.create({name: post.info.title, message: {embeds:[embed], components: [actionRow2]}})
+            }
         } else if(channelType =='Text') {
             msg = (channel as TextChannel).send({content: ping, embeds: [embed], components: [actionRow]}).then(async (msg) => {
                 await updateMessage(post.id, {id: msg.id, url: msg.url})
@@ -299,7 +304,7 @@ export async function sendPost(post: Post) {
         const rejectBtn = new ButtonBuilder().setCustomId('button_post_reject').setLabel('Reject').setStyle(ButtonStyle.Danger);
         const actionRow = new ActionRowBuilder<ButtonBuilder>().setComponents(approveBtn, rejectBtn);
         try {
-            (channels.jobApproval as TextChannel).send({embeds: [embed.addFields(logExtraData(post))], components: [actionRow]});
+            (channels.jobApproval as TextChannel).send({embeds: [embed.addFields(await logExtraData(post))], components: [actionRow]});
         } catch {console.log}
     }
     return
