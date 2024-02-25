@@ -180,33 +180,33 @@ export async function closePost(post:Post) {
 }
 export async function automation(client: Client) {
     let posts = await getPosts()
-    let premiumPosts = await getPostsPremium()
     posts.forEach((post) => {
-        if(!(post.stats.premium)) return
         if(Date.now() - post.stats.times.bumped >= bumpCooldown) {
-            let channel : discord.Channel | null | undefined = null
-            switch (post.category) {
-                case jobTypes.commissionJob.value:
-                    channel = channels.commissionJob
-                    break;
-                case jobTypes.paidJob.value:
-                    channel = channels.paidJob
-                    break;
-                case jobTypes.unpaidJob.value:
-                    channel = channels.unpaidJob
-                    break;
-                case jobTypes.forHireAd.value:
-                    channel = channels.forHireJob
-                    break;
+            if(post.stats.premium) {
+                let channel : discord.Channel | null | undefined = null
+                switch (post.category) {
+                    case jobTypes.commissionJob.value:
+                        channel = channels.commissionJob
+                        break;
+                    case jobTypes.paidJob.value:
+                        channel = channels.paidJob
+                        break;
+                    case jobTypes.unpaidJob.value:
+                        channel = channels.unpaidJob
+                        break;
+                    case jobTypes.forHireAd.value:
+                        channel = channels.forHireJob
+                        break;
+                }
+                try {
+                    (channel as ForumChannel).threads.fetch(post.stats.message.id).then((thread) => {
+                        thread?.send(`Bump Message`).then((msg) => {msg.delete()})
+                    })
+                    updateBump(post.id)
+                    const bumpLogPost = getLogEmbed(post.creatorId, post.category, post.creatorId, post.stats.message.url, true, 'Post Bumped! (Auto)');
+                    (channels.bumpLogs as TextChannel).send({embeds: [bumpLogPost]})
+                } catch {console.log}
             }
-            try {
-                (channel as ForumChannel).threads.fetch(post.stats.message.id).then((thread) => {
-                    thread?.send(`Bump Message`).then((msg) => {msg.delete()})
-                })
-                updateBump(post.id)
-                const bumpLogPost = getLogEmbed(post.creatorId, post.category, post.creatorId, post.stats.message.url, true, 'Post Bumped! (Auto)');
-                (channels.bumpLogs as TextChannel).send({embeds: [bumpLogPost]})
-            } catch {console.log}
         }
     })
     posts.forEach(async(post) => {
