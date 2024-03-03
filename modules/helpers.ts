@@ -54,7 +54,6 @@ export function getModal(jobType: jobType, interactionId: string) {
         .setPlaceholder("Share Your portfolio link or previous work.")
         .setStyle(TextInputStyle.Paragraph)
         .setMaxLength(128)
-        .setRequired(true)
     const jobBudgetText = new TextInputBuilder()
         .setCustomId('jobBudgetText')
         .setStyle(TextInputStyle.Short)
