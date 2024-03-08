@@ -57,13 +57,7 @@ export async function postJob(interaction: ButtonInteraction, jobType: jobType) 
                         if(!(value.value == '')) post.info.desc = value.value
                         break
                     case 'jobPortfolioText':
-                        if(value.value.toLowerCase().startsWith('http')){
-                            if(!(value.value == '')) post.info.portfolio = value.value
-                        } else {
-                            brk = true;
-                            modalInteraction.editReply({content: 'Your portfolio link must begin with either http or https'})
-                            return
-                        }
+                        if(!(value.value == '')) post.info.portfolio = value.value
                         break
                     case 'jobBudgetText':
                         if(!(value.value == '')) post.info.budget = value.value
