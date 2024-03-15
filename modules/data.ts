@@ -10,6 +10,7 @@ export const roleIds = {
 }
 export const channelIds = {
     paidJob: '1208868490283585566',
+    paidJob2: '1205280413971648532',
     commissionJob: '1200827767244202114',
     forHireJob: '1200827093181792266',
     unpaidJob: '1200828645443375244',
@@ -86,3 +87,4 @@ export const PREMIUM_COMMISSION_JOB_BANNER_URL = "https://i.imgur.com/nnjtLfi.pn
 export const logExtraData = (post: Post) => { return {name:'Information', value: `**User ID** : ${post.creatorId}\n**User Tag** : <@!${post.creatorId}>\n**Category** : ${getLabelByValue(post.category)}\n**Job Type** : ${getNameByValue(post.type)}`}}
 export const bumpCooldown = 172800000
 export const cooldownTime = 172800000
+export const guildId = '1024730510880165968'

@@ -70,11 +70,13 @@ export async function execute(interaction: ButtonInteraction) {
                         tags.push(tag.id)
                     }
                 })
-                const member = await interaction.guild?.members.fetch(post?.creatorId)
                 const bumpBtn = new ButtonBuilder().setCustomId('button_post_bump').setEmoji('🚀').setLabel('Bump').setStyle(ButtonStyle.Primary)
                 const bumpBtnRow = new ActionRowBuilder<ButtonBuilder>().addComponents(bumpBtn)
                 msg2 = await (channel as ForumChannel).threads.create({name: post.info.title,message: {content: ping, embeds: [embed2],components:[actionRow2]}, appliedTags: tags});
-                (channel as ForumChannel).threads.fetch(msg2.id).then(async (thread) => {thread?.send({content:"👉  Bump your post by clicking on the 'Bump' button, it will boost your post's visibility.", components: [bumpBtnRow]});if(member) thread?.members.add(member)})
+                (channel as ForumChannel).threads.fetch(msg2.id).then(async (thread) => {thread?.send({content:"👉  Bump your post by clicking on the 'Bump' button, it will boost your post's visibility.", components: [bumpBtnRow]});})
+                if(post.type == jobTypes.paidJob.value) {
+                    (channels.paidJob2 as ForumChannel).threads.create({name: post.info.title, message: {embeds: [embed2]}})
+                }
             } else {
                 msg2 = await (channel as TextChannel).send({content: ping, embeds: [embed2], components: [actionRow2]})
             }
