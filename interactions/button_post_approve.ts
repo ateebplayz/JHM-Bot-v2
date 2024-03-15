@@ -30,7 +30,7 @@ export async function execute(interaction: ButtonInteraction) {
     const actionRow = new ActionRowBuilder<ButtonBuilder>().setComponents(approveBtn, rejectBtn)
     try {
         if(post) {
-            msg.edit({embeds: [getEmbedJob(post).addFields(logExtraData(post))], components: [actionRow]})
+            msg.edit({embeds: [getEmbedJob(post).addFields(await logExtraData(post))], components: [actionRow]})
             await updateApproval(post.id)
             const embed2 = getEmbedJob(post)
             let channel: discord.Channel | null | undefined;
@@ -57,6 +57,7 @@ export async function execute(interaction: ButtonInteraction) {
             if(post.type == jobTypes.commissionJob.value || post.type == jobTypes.paidJob.value || post.type == jobTypes.unpaidJob.value) applyBtn.setEmoji('💼')
             const reportBtn = new ButtonBuilder().setCustomId('button_post_report').setLabel('Report').setEmoji('🚨').setStyle(ButtonStyle.Danger)
             const referBtn = new ButtonBuilder().setCustomId('button_post_refer').setLabel('Refer').setEmoji('🤝').setStyle(ButtonStyle.Secondary)
+            const gearButton = new ButtonBuilder().setCustomId('button_post_help').setEmoji('⚙️').setStyle(ButtonStyle.Secondary)
 
             if(post.type == jobTypes.forHireAd.value) applyBtn.setLabel('Hire')
 
@@ -75,7 +76,12 @@ export async function execute(interaction: ButtonInteraction) {
                 msg2 = await (channel as ForumChannel).threads.create({name: post.info.title,message: {content: ping, embeds: [embed2],components:[actionRow2]}, appliedTags: tags});
                 (channel as ForumChannel).threads.fetch(msg2.id).then(async (thread) => {thread?.send({content:"👉  Bump your post by clicking on the 'Bump' button, it will boost your post's visibility.", components: [bumpBtnRow]});})
                 if(post.type == jobTypes.paidJob.value) {
+<<<<<<< HEAD
                     (channels.paidJob2 as ForumChannel).threads.create({name: post.info.title, message: {embeds: [embed2]}})
+=======
+                    const actionRow2 = new ActionRowBuilder<ButtonBuilder>().setComponents(applyBtn, gearButton);
+                    (channels.paidJob2 as ForumChannel).threads.create({name: post.info.title, message: {embeds: [embed2], components: [actionRow2]}})
+>>>>>>> ec4b631a19988f3aa64c40606011c893686d6c87
                 }
             } else {
                 msg2 = await (channel as TextChannel).send({content: ping, embeds: [embed2], components: [actionRow2]})

@@ -54,7 +54,7 @@ export function getModal(jobType: jobType, interactionId: string) {
         .setPlaceholder("Share Your portfolio link or previous work.")
         .setStyle(TextInputStyle.Paragraph)
         .setMaxLength(128)
-        .setRequired(true)
+        .setRequired(false)
     const jobBudgetText = new TextInputBuilder()
         .setCustomId('jobBudgetText')
         .setStyle(TextInputStyle.Short)
@@ -266,6 +266,7 @@ export async function sendPost(post: Post) {
     if(post.type == jobTypes.commissionJob.value || post.type == jobTypes.paidJob.value || post.type == jobTypes.unpaidJob.value) applyBtn.setEmoji('💼')
     const reportBtn = new ButtonBuilder().setCustomId('button_post_report').setLabel('Report').setEmoji('🚨').setStyle(ButtonStyle.Danger)
     const referBtn = new ButtonBuilder().setCustomId('button_post_refer').setLabel('Refer').setEmoji('🤝').setStyle(ButtonStyle.Secondary)
+    const gearButton = new ButtonBuilder().setCustomId('button_post_help').setEmoji('⚙️').setStyle(ButtonStyle.Secondary)
 
     if(post.type == jobTypes.forHireAd.value) applyBtn.setLabel('Hire')
 
@@ -289,7 +290,12 @@ export async function sendPost(post: Post) {
                 (channel as ForumChannel).threads.fetch(msg.id).then(async (thread) => {thread?.send({content: "👉  Bump your post by clicking on the 'Bump' button, it will boost your post's visibility.", components: [bumpBtnRow]}); await updateMessage(post.id, {id: thread?.id || '', url: thread?.url || ''}); await updateApproval(post.id);});
             })
             if(post.type == jobTypes.paidJob.value) {
+<<<<<<< HEAD
                 (channels.paidJob2 as ForumChannel).threads.create({name: post.info.title, message: {embeds:[embed]}})
+=======
+                const actionRow2 = new ActionRowBuilder<ButtonBuilder>().setComponents(applyBtn, gearButton);
+                (channels.paidJob2 as ForumChannel).threads.create({name: post.info.title, message: {embeds:[embed], components: [actionRow2]}})
+>>>>>>> ec4b631a19988f3aa64c40606011c893686d6c87
             }
         } else if(channelType =='Text') {
             msg = (channel as TextChannel).send({content: ping, embeds: [embed], components: [actionRow]}).then(async (msg) => {
@@ -302,7 +308,7 @@ export async function sendPost(post: Post) {
         const rejectBtn = new ButtonBuilder().setCustomId('button_post_reject').setLabel('Reject').setStyle(ButtonStyle.Danger);
         const actionRow = new ActionRowBuilder<ButtonBuilder>().setComponents(approveBtn, rejectBtn);
         try {
-            (channels.jobApproval as TextChannel).send({embeds: [embed.addFields(logExtraData(post))], components: [actionRow]});
+            (channels.jobApproval as TextChannel).send({embeds: [embed.addFields(await logExtraData(post))], components: [actionRow]});
         } catch {console.log}
     }
     return
